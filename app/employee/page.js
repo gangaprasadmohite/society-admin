@@ -1,8 +1,7 @@
 "use client";
 
 import SearchBar from "@/lib/components/SearchBar";
-import ResidentsTable from "@/lib/components/table/ResidentsTable";
-import { Input } from "@mui/joy";
+import EmployeeTable from "@/lib/components/table/EmployeeTable";
 import React from "react";
 
 function Page() {
@@ -10,7 +9,7 @@ function Page() {
     <>
       <div style={{ display: "flex", flexDirection: "column" }}>
         <SearchBar />
-        <ResidentsTable />
+        <EmployeeTable />
       </div>
     </>
   );
