@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Switch } from "@headlessui/react";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Button, IconButton } from "@mui/joy";
+import { Box, Button, Checkbox, Drawer, IconButton } from "@mui/joy";
 import { useRouter } from "next/navigation";
 import EditIcon from "@mui/icons-material/Edit";
 import Select from "@/lib/components/select";
@@ -37,6 +37,12 @@ export default function Project() {
 
   const [isEditMode, setIsEditMode] = useState(false);
 
+  const [openDrawer, setOpenDrawer] = useState(false);
+
+  const handleCloseDrawer = () => {
+    setOpenDrawer(false);
+  };
+
   const handleModeChange = (e) => {
     setIsEditMode(!isEditMode);
   };
@@ -61,6 +67,7 @@ export default function Project() {
   const [isUnitModalVisible, setIsUnitModalVisible] = useState(false);
 
   const handleChange = (name) => (event) => {
+    // console.log(project);
     let nextState = produce(project, (draft) => {
       switch (name) {
         case "projectType":
@@ -78,9 +85,15 @@ export default function Project() {
     });
 
     setProject(nextState);
+    localStorage.setItem("project", JSON.stringify(nextState));
   };
 
-  console.log(project);
+  // console.log(project);
+
+  const onAdd = (projectType) => (event) => {
+    setOpenDrawer(true);
+    console.log(projectType);
+  };
 
   return (
     <div>
@@ -138,161 +151,99 @@ export default function Project() {
                     onSelect={handleChange("projectType")}
                   />
                 </div>
-              </div>
+                <div className="w-96 gap-y-8 grid grid-cols-1">
+                  <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="bungalowSociety"
+                      className="m-3 mt-3"
+                      size="sm"
+                      label="Bunglow society"
+                      defaultChecked={project["bungalowSociety"]}
+                    />
+                    {project["bungalowSociety"] == true && (
+                      <Button size="sm" onClick={onAdd("Bungalow Society")}>
+                        Add
+                      </Button>
+                    )}
+                  </div>
+                  <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="buildingComplex"
+                      className="m-3"
+                      size="sm"
+                      label="Building complex"
+                      defaultChecked={project["buildingComplex"]}
+                    />
+                    {project["buildingComplex"] == true && (
+                      <Button size="sm" onClick={onAdd("Building Complex")}>
+                        Add
+                      </Button>
+                    )}
+                  </div>
+                  {/* <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="combined"
+                      className="m-3"
+                      size="sm"
+                      label="Combined (Building complex with bungalows)"
+                      defaultChecked={project["combined"]}
+                    />
+                    {project["combined"] == true && (
+                      <Button size="sm" onClick={onAdd()}>
+                        Add
+                      </Button>
+                    )}
+                  </div> */}
+                  <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="privateBungalow"
+                      className="m-3"
+                      size="sm"
+                      label="Private Bungalow"
+                      defaultChecked={project["privateBungalow"]}
+                    />
+                    {project["privateBungalow"] == true && (
+                      <Button size="sm" onClick={onAdd("Private Bungalow")}>
+                        Add
+                      </Button>
+                    )}
+                  </div>
 
-              {/* r type */}
-              <div className="sm:col-span-4">
-                {project?.projectType?.name === "Residential" && (
-                  <fieldset>
-                    <p className="mt-1 text-sm leading-6 text-gray-600"></p>
-                    <div className="mt-4 space-y-6">
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-everything"
-                          name="type"
-                          type="radio"
-                          value="Bunglow Society"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-everything"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Bunglow Society
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-email"
-                          name="type"
-                          type="radio"
-                          value="Building complex"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-email"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Building complex
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-nothing"
-                          name="type"
-                          type="radio"
-                          value="Combined (Building complex with bunglows)"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-nothing"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Combined (Building complex with bunglows)
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-nothing"
-                          name="type"
-                          type="radio"
-                          value="Private Bunglow"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-nothing"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Private Bunglow
-                        </label>
-                      </div>
-                    </div>
-                  </fieldset>
-                )}
-
-                {project?.projectType?.name === "Commercial" && (
-                  <fieldset>
-                    <p className="mt-1 text-sm leading-6 text-gray-600"></p>
-                    <div className="mt-4 space-y-6">
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-everything"
-                          name="type"
-                          type="radio"
-                          value="Mall"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-everything"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Mall
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-email"
-                          name="type"
-                          type="radio"
-                          value="Shops"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-email"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Shops
-                        </label>
-                      </div>
-                    </div>
-                  </fieldset>
-                )}
-
-                {project?.projectType?.name === "Mixed use" && (
-                  <fieldset>
-                    <p className="mt-1 text-sm leading-6 text-gray-600"></p>
-                    <div className="mt-4 space-y-6">
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-everything"
-                          name="type"
-                          type="radio"
-                          value="Bunglows with shops"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-everything"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Bunglows with shops
-                        </label>
-                      </div>
-                      <div className="flex items-center gap-x-3">
-                        <input
-                          id="push-email"
-                          name="type"
-                          type="radio"
-                          value="Building complex with shops"
-                          onChange={handleChange("type")}
-                          className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                        />
-                        <label
-                          htmlFor="push-email"
-                          className="block text-sm font-medium leading-6 text-gray-900"
-                        >
-                          Building complex with shops
-                        </label>
-                      </div>
-                    </div>
-                  </fieldset>
-                )}
+                  <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="mall"
+                      className="m-3"
+                      size="sm"
+                      label="Mall"
+                      defaultChecked={project["mall"]}
+                    />
+                    {project["mall"] == true && (
+                      <Button size="sm" onClick={onAdd("Mall")}>
+                        Add
+                      </Button>
+                    )}
+                  </div>
+                  <div>
+                    <Checkbox
+                      onChange={handleChange("type")}
+                      name="shop"
+                      className="m-3"
+                      size="sm"
+                      label="Shop"
+                      defaultChecked={project["shop"]}
+                    />
+                    {project["shop"] == true && (
+                      <Button size="sm" onClick={onAdd("Shop")}>
+                        Add
+                      </Button>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -401,6 +352,12 @@ export default function Project() {
             ) : null}
           </div>
         </form>
+
+        <Drawer anchor="right" open={openDrawer}>
+          <Box sx={{ width: "10rem" }} onClose={handleCloseDrawer}>
+            hi
+          </Box>
+        </Drawer>
       </div>
 
       <UnitModal
