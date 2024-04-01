@@ -88,16 +88,16 @@ export default function Project() {
   console.log(project);
 
   return (
-    <div>
-      <div className="px-4 sm:px-0 flex justify-between align-bottom">
-        <h3 className="text-base font-semibold leading-7 text-gray-900">
+    <div className="">
+      <div className="px-4  sm:px-0 flex justify-between align-bottom">
+        <h3 className="text-base ml-64 font-semibold leading-7 text-gray-900">
           Configure Project
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
             Project configuration screen
           </p>
         </h3>
       </div>
-      <div className=" mt-6 border-t border-gray-100">
+      <div className=" mt-6 flex flex-col items-center border-t border-gray-100">
         <form action="#" method="POST" className="max-w-xl mt-10">
           <div className=" border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
             <div className="sm:col-span-3">
