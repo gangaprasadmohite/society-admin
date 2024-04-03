@@ -7,9 +7,7 @@ const page = () => {
   const [data, setData] = useState({ id: 1, name: "harshad" });
   return (
     <>
-      <div>Occupants</div>
       <div>
-        {/* <SearchBar /> */}
         <OccupantTable data={data} />
       </div>
     </>

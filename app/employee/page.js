@@ -7,8 +7,7 @@ import React from "react";
 function Page() {
   return (
     <>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <SearchBar />
+      <div>
         <EmployeeTable />
       </div>
     </>
