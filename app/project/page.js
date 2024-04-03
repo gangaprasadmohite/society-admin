@@ -1,11 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Switch } from "@headlessui/react";
 import { PaperClipIcon } from "@heroicons/react/20/solid";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Box, Button, Checkbox, Drawer, IconButton } from "@mui/joy";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionGroup,
+  AccordionSummary,
+  Box,
+  Button,
+  Checkbox,
+  Drawer,
+  FormHelperText,
+  IconButton,
+  Input,
+} from "@mui/joy";
 import { useRouter } from "next/navigation";
 import EditIcon from "@mui/icons-material/Edit";
 import Select from "@/lib/components/select";
@@ -14,6 +26,8 @@ import TextField from "@/lib/components/TextField";
 import { produce } from "immer";
 import TableTemplateComponent from "@/lib/components/table/TableTemplateComponent";
 import { UnitModal } from "@/lib/components/modal";
+import axios from "axios";
+import { AddCircleOutlined } from "@mui/icons-material";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -38,6 +52,16 @@ export default function Project() {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [openDrawer, setOpenDrawer] = useState(false);
+  const [typeOfProject, setTypeOfProject] = useState("");
+  const [openUnitsDrawer, setOpenUnitsDrawer] = useState(false);
+
+  const [openBuildingComplexDrawer, setOpenBuildingComplexDrawer] =
+    useState(false);
+
+  const [hasGroundFloor, setHasGroundFloor] = useState(false);
+  const [hasBasement, setHasBasement] = useState(false);
+  const [unitsOnFloor, setUnitsOnFloor] = useState(Array(12).fill({}));
+  // console.log(unitsOnFloor);
 
   const handleCloseDrawer = () => {
     setOpenDrawer(false);
@@ -47,9 +71,35 @@ export default function Project() {
     setIsEditMode(!isEditMode);
   };
 
-  const [project, setProject] = useState({
-    projectType: null,
-  });
+  const addUnitsOnFloor = (index, innerIndex) => () => {
+    console.log(index, innerIndex);
+    // let temp = unitsOnFloor;
+    // temp[index].splice(innerIndex, 0, "");
+    // console.log(temp);
+    let temp = unitsOnFloor;
+    temp[index].push("");
+    console.log(temp);
+    setUnitsOnFloor(temp);
+  };
+
+  useEffect(() => {
+    let temp = unitsOnFloor;
+
+    for (let i = 0; i < 12; i++) {
+      temp[i] = {
+        floorNumber: i,
+        units: [{ unitNumber: 1, unitInfo: { id: 1, type: "1bhk-1000SqFt" } }],
+      };
+
+      setUnitsOnFloor(temp);
+    }
+  }, []);
+
+  const [project, setProject] = useState(
+    JSON.parse(localStorage.getItem("project")) || {
+      projectType: null,
+    }
+  );
 
   const [projectTypes, setProjectTypes] = useState([
     { id: 1, name: "Residential" },
@@ -65,9 +115,13 @@ export default function Project() {
   ]);
 
   const [isUnitModalVisible, setIsUnitModalVisible] = useState(false);
-
+  const [buildings, setBuildings] = useState([]);
+  const handleAddBuildings = () => {
+    console.log("Adding building");
+    setOpenBuildingComplexDrawer(true);
+  };
   const handleChange = (name) => (event) => {
-    // console.log(project);
+    console.log(project);
     let nextState = produce(project, (draft) => {
       switch (name) {
         case "projectType":
@@ -76,7 +130,7 @@ export default function Project() {
           break;
 
         case "type":
-          draft[name] = event.target.value;
+          draft[event.target.name] = event.target.checked;
           break;
 
         default:
@@ -89,15 +143,22 @@ export default function Project() {
   };
 
   // console.log(project);
+  useEffect(() => {
+    (async () => {
+      let response = await axios.get("http://localhost:5001/getBuildings");
+      setBuildings(response.data);
+    })();
+  }, [openDrawer]);
 
   const onAdd = (projectType) => (event) => {
     setOpenDrawer(true);
+    setTypeOfProject(projectType);
     console.log(projectType);
   };
 
   return (
     <div>
-      <div className="px-4 sm:px-0 flex justify-between align-bottom">
+      <div className="px-4 ml-64 sm:px-0 flex justify-between align-bottom">
         <h3 className="text-base font-semibold leading-7 text-gray-900">
           Configure Project
           <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
@@ -105,84 +166,61 @@ export default function Project() {
           </p>
         </h3>
       </div>
-      <div className=" mt-6 border-t border-gray-100">
-        <form action="#" method="POST" className="max-w-xl mt-10">
-          <div className=" border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-            <div className="sm:col-span-3">
-              <OutlinedInput label="Project name" />
-            </div>
-
-            <div className="sm:col-span-3">
-              <TextField label="Address" />
-            </div>
-            <div className="sm:col-span-3">
-              <OutlinedInput label="Developer" />
-            </div>
-            <div className="sm:col-span-3">
-              <Select
-                options={amenities}
-                label="Amenities"
-                nameProperty="name"
-                valueProperty="id"
-              />
-            </div>
-          </div>
-          <div className="pb-12 pt-12">
-            <h2 className="text-base font-semibold leading-7 text-gray-900">
-              Project details
-            </h2>
-            <p className="mt-1 text-sm leading-6 text-gray-600">
-              Use a permanent address where you can receive mail.
-            </p>
-
-            <div className="mt-10 border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              <div className="sm:col-span-4">
-                <label
-                  htmlFor="type"
-                  className="block text-sm font-medium leading-6 text-gray-900"
-                >
-                  Project type
-                </label>
-                <div className="mt-2">
-                  <Select
-                    options={projectTypes}
-                    nameProperty="name"
-                    valueProperty="id"
-                    onSelect={handleChange("projectType")}
-                  />
-                </div>
-                <div className="w-96 gap-y-8 grid grid-cols-1">
-                  <div>
-                    <Checkbox
-                      onChange={handleChange("type")}
-                      name="bungalowSociety"
-                      className="m-3 mt-3"
-                      size="sm"
-                      label="Bunglow society"
-                      defaultChecked={project["bungalowSociety"]}
+      <div className="flex flex-col items-center">
+        <div className=" mt-6 border-t border-gray-100">
+          <form action="#" method="POST" className="max-w-xl mt-10">
+            <div className=" border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+              <div className="sm:col-span-3">
+                <OutlinedInput label="Project name" />
+              </div>
+              <div className="mt-10 border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+                <div className="sm:col-span-4">
+                  <label
+                    htmlFor="type"
+                    className="block text-sm font-medium leading-6 text-gray-900"
+                  >
+                    Project type
+                  </label>
+                  {/* <div className="mt-2">
+                    <Select
+                      options={projectTypes}
+                      nameProperty="name"
+                      valueProperty="id"
+                      onSelect={handleChange("type")}
                     />
-                    {project["bungalowSociety"] == true && (
-                      <Button size="sm" onClick={onAdd("Bungalow Society")}>
-                        Add
-                      </Button>
-                    )}
-                  </div>
-                  <div>
-                    <Checkbox
-                      onChange={handleChange("type")}
-                      name="buildingComplex"
-                      className="m-3"
-                      size="sm"
-                      label="Building complex"
-                      defaultChecked={project["buildingComplex"]}
-                    />
-                    {project["buildingComplex"] == true && (
-                      <Button size="sm" onClick={onAdd("Building Complex")}>
-                        Add
-                      </Button>
-                    )}
-                  </div>
-                  {/* <div>
+                  </div> */}
+                  <div className="w-96 gap-y-8 grid grid-cols-1">
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="bungalowSociety"
+                        className="m-3 mt-3"
+                        size="sm"
+                        label="Bunglow society"
+                        defaultChecked={project["bungalowSociety"]}
+                      />
+                      {project["bungalowSociety"] == true && (
+                        <Button size="sm" onClick={onAdd("Bungalow Society")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="buildingComplex"
+                        className="m-3"
+                        size="sm"
+                        label="Building complex"
+                        defaultChecked={project["buildingComplex"]}
+                      />
+                      {project["buildingComplex"] == true && (
+                        <Button size="sm" onClick={onAdd("Building Complex")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                    {/* <div>
                     <Checkbox
                       onChange={handleChange("type")}
                       name="combined"
@@ -197,165 +235,581 @@ export default function Project() {
                       </Button>
                     )}
                   </div> */}
-                  <div>
-                    <Checkbox
-                      onChange={handleChange("type")}
-                      name="privateBungalow"
-                      className="m-3"
-                      size="sm"
-                      label="Private Bungalow"
-                      defaultChecked={project["privateBungalow"]}
-                    />
-                    {project["privateBungalow"] == true && (
-                      <Button size="sm" onClick={onAdd("Private Bungalow")}>
-                        Add
-                      </Button>
-                    )}
-                  </div>
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="privateBungalow"
+                        className="m-3"
+                        size="sm"
+                        label="Private Bungalow"
+                        defaultChecked={project["privateBungalow"]}
+                      />
+                      {project["privateBungalow"] == true && (
+                        <Button size="sm" onClick={onAdd("Private Bungalow")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
 
-                  <div>
-                    <Checkbox
-                      onChange={handleChange("type")}
-                      name="mall"
-                      className="m-3"
-                      size="sm"
-                      label="Mall"
-                      defaultChecked={project["mall"]}
-                    />
-                    {project["mall"] == true && (
-                      <Button size="sm" onClick={onAdd("Mall")}>
-                        Add
-                      </Button>
-                    )}
-                  </div>
-                  <div>
-                    <Checkbox
-                      onChange={handleChange("type")}
-                      name="shop"
-                      className="m-3"
-                      size="sm"
-                      label="Shop"
-                      defaultChecked={project["shop"]}
-                    />
-                    {project["shop"] == true && (
-                      <Button size="sm" onClick={onAdd("Shop")}>
-                        Add
-                      </Button>
-                    )}
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="mall"
+                        className="m-3"
+                        size="sm"
+                        label="Mall"
+                        defaultChecked={project["mall"]}
+                      />
+                      {project["mall"] == true && (
+                        <Button size="sm" onClick={onAdd("Mall")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="shop"
+                        className="m-3"
+                        size="sm"
+                        label="Shop"
+                        defaultChecked={project["shop"]}
+                      />
+                      {project["shop"] == true && (
+                        <Button size="sm" onClick={onAdd("Shop")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
+                    <div>
+                      <Checkbox
+                        onChange={handleChange("type")}
+                        name="officeComplex"
+                        className="m-3"
+                        size="sm"
+                        label="Office Complex"
+                        defaultChecked={project["shop"]}
+                      />
+                      {project["shop"] == true && (
+                        <Button size="sm" onClick={onAdd("Office Complex")}>
+                          Add
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </div>
+
+              <div className="sm:col-span-3">
+                <TextField label="Address" />
+              </div>
+              <div className="sm:col-span-3">
+                <OutlinedInput label="Developer" />
+              </div>
+              <div className="sm:col-span-3">
+                <Select
+                  options={amenities}
+                  label="Amenities"
+                  nameProperty="name"
+                  valueProperty="id"
+                />
               </div>
             </div>
+          </form>
+        </div>
 
-            {project?.type === "Bunglow Society" ||
-            project?.type === "Private Bunglow" ? null : (
-              <div className="mt-10 border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Add Building details
-                </h2>
+        <Drawer
+          anchor="right"
+          open={openDrawer}
+          size="lg"
+          onClose={handleCloseDrawer}
+        >
+          <Box className="p-6">
+            {typeOfProject == "Building Complex" && (
+              <>
+                <div>Building Complex</div>
+                <TableTemplateComponent
+                  hasCrudActions={true}
+                  onAdd={handleAddBuildings}
+                  columns={[
+                    { header: "Building No.", key: "buildingName" },
+                    { header: "Project Name", key: "projectName" },
+                    { header: "No. of Floors", key: "floors" },
+                    {
+                      header: "",
+                      key: null,
+                      cell: () => (
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setOpenUnitsDrawer(true);
+                          }}
+                        >
+                          Add Floors
+                        </Button>
+                      ),
+                    },
+                  ]}
+                  data={buildings}
+                />
 
-                <div className="sm:col-span-3">
-                  <OutlinedInput label="Building Name" />
-                </div>
-
-                <div className="sm:col-span-3">
-                  <OutlinedInput label="Floors" />
-                </div>
-
-                <div className="sm:col-span-3 flex">
-                  <div className="flex h-6 items-center">
-                    <input
-                      id="comments"
-                      name="comments"
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                <Drawer
+                  open={openBuildingComplexDrawer}
+                  anchor="right"
+                  size="lg"
+                  onClose={() => {
+                    setOpenBuildingComplexDrawer(false);
+                  }}
+                >
+                  <Box className="m-6">
+                    <FormHelperText>Building Name</FormHelperText>
+                    <Input className="mb-4 mt-1" placeholder="Building Name" />
+                    <FormHelperText>Number of Floors</FormHelperText>
+                    <Input
+                      className="mb-4 mt-1"
+                      placeholder="No. of Floors"
+                      type="number"
                     />
-                  </div>
-                  <div className="text-sm leading-6 ml-3">
-                    <label
-                      htmlFor="comments"
-                      className="font-medium text-gray-900"
+                    <Checkbox
+                      className="mb-4 mt-1"
+                      onChange={() => {
+                        setHasGroundFloor((prev) => !prev);
+                      }}
+                      checked={hasGroundFloor}
+                      label="Does the building include a ground floor?"
+                    />
+                    <br />
+                    <Checkbox
+                      className="mb-4 mt-1"
+                      label="Does the building have a basement?"
+                      value={hasBasement}
+                      onChange={() => {
+                        setHasBasement((prev) => !prev);
+                      }}
+                    />
+                    {hasBasement && (
+                      <>
+                        <Input
+                          className="mb-4 mt-1"
+                          placeholder="No. of basement floors"
+                          type="number"
+                        />
+                      </>
+                    )}
+                    <br />
+                    <div className="flex justify-end">
+                      <Button
+                        fullWidth
+                        onClick={() => {
+                          setOpenBuildingComplexDrawer(false);
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </div>
+                  </Box>
+                </Drawer>
+
+                <Drawer
+                  open={openUnitsDrawer}
+                  anchor="right"
+                  size="lg"
+                  onClose={() => {
+                    setOpenUnitsDrawer(false);
+                  }}
+                >
+                  <Box className="m-6">
+                    <AccordionGroup>
+                      {unitsOnFloor.map((element, index) => (
+                        <Accordion>
+                          <AccordionSummary>Floor {index + 1}</AccordionSummary>
+                          <AccordionDetails>
+                            {unitsOnFloor[index].units.map(
+                              (element, innerIndex) => (
+                                <div className="flex">
+                                  <Input className="w-16" />
+
+                                  <IconButton
+                                    className="w-6"
+                                    onClick={addUnitsOnFloor(index, innerIndex)}
+                                  >
+                                    <AddCircleOutlined />
+                                  </IconButton>
+                                </div>
+                              )
+                            )}
+                          </AccordionDetails>
+                        </Accordion>
+                      ))}
+                    </AccordionGroup>
+                    <Button
+                      fullWidth
+                      sx={{ marginTop: "1rem" }}
+                      onClick={() => {
+                        setOpenUnitsDrawer(false);
+                      }}
                     >
-                      Ground Floor
-                    </label>
-                    <p className="text-gray-500">
-                      Doe the building has ground floor?
-                    </p>
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <OutlinedInput label="No. of units" />
-                </div>
-              </div>
+                      Save
+                    </Button>
+                  </Box>
+                </Drawer>
+                <Button
+                  fullWidth
+                  sx={{ marginTop: "1rem" }}
+                  onClick={() => {
+                    setOpenUnitsDrawer(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </>
             )}
-
-            {/* floor plan */}
-            {project?.type === "Bunglow Society" ||
-            project?.type === "Private Bunglow" ? null : (
-              <div className="mt-10 border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Add Floor plan
-                </h2>
-
-                <div className="sm:col-span-3">
-                  <OutlinedInput label="Floor plan name" />
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Units
-                  </label>
-
-                  <TableTemplateComponent
-                    columns={columns}
-                    onAdd={() => {
-                      setIsUnitModalVisible(true);
-                    }}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
-                    hasCrudActions={true}
-                  />
-                </div>
-              </div>
+            {typeOfProject == "Bungalow Society" && (
+              <>
+                <div>Bungalow Society</div>
+                <TableTemplateComponent
+                  columns={[{ header: "Units" }]}
+                  hasCrudActions={true}
+                  onAdd={() => {}}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
+                <Button
+                  fullWidth
+                  sx={{ marginTop: "1rem" }}
+                  onClick={() => {
+                    setOpenUnitsDrawer(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </>
             )}
-
-            {project?.type === "Bunglow Society" ||
-            project?.type === "Private Bunglow" ? (
-              <div className="mt-10 border-b border-gray-900/10 pb-12 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">
-                  Add Units
-                </h2>
-
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="first-name"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Units
-                  </label>
-
+            {typeOfProject == "Private Bungalow" && (
+              <>
+                <div>Private Bungalow</div>
+                <TableTemplateComponent
+                  columns={[{ header: "Units" }]}
+                  hasCrudActions={true}
+                  onAdd={() => {}}
+                  onEdit={() => {}}
+                  onDelete={() => {}}
+                />
+                <Button
+                  fullWidth
+                  sx={{ marginTop: "1rem" }}
+                  onClick={() => {
+                    setOpenUnitsDrawer(false);
+                  }}
+                >
+                  Save
+                </Button>
+              </>
+            )}
+            {typeOfProject == "Shop" && (
+              <>
+                <div>shop</div>
+              </>
+            )}
+            {typeOfProject == "Mall" && (
+              <>
+                <>
+                  <div>Mall</div>
                   <TableTemplateComponent
-                    columns={columns}
-                    onAdd={() => {
-                      setIsUnitModalVisible(true);
-                    }}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
                     hasCrudActions={true}
+                    onAdd={handleAddBuildings}
+                    columns={[
+                      { header: "Building No.", key: "buildingName" },
+                      { header: "Project Name", key: "projectName" },
+                      { header: "No. of Floors", key: "floors" },
+                      {
+                        header: "",
+                        key: null,
+                        cell: () => (
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setOpenUnitsDrawer(true);
+                            }}
+                          >
+                            Add Units
+                          </Button>
+                        ),
+                      },
+                    ]}
+                    data={buildings}
                   />
-                </div>
-              </div>
-            ) : null}
-          </div>
-        </form>
 
-        <Drawer anchor="right" open={openDrawer}>
-          <Box sx={{ width: "10rem" }} onClose={handleCloseDrawer}>
-            hi
+                  <Drawer
+                    open={openBuildingComplexDrawer}
+                    anchor="right"
+                    size="lg"
+                    onClose={() => {
+                      setOpenBuildingComplexDrawer(false);
+                    }}
+                  >
+                    <Box className="m-6">
+                      <FormHelperText>Building Name</FormHelperText>
+                      <Input
+                        className="mb-4 mt-1"
+                        placeholder="Building Name"
+                      />
+                      <FormHelperText>Number of Floors</FormHelperText>
+                      <Input
+                        className="mb-4 mt-1"
+                        placeholder="No. of Floors"
+                        type="number"
+                      />
+                      <Checkbox
+                        className="mb-4 mt-1"
+                        onChange={() => {
+                          setHasGroundFloor((prev) => !prev);
+                        }}
+                        checked={hasGroundFloor}
+                        label="Does the building include a ground floor?"
+                      />
+                      <br />
+                      <Checkbox
+                        className="mb-4 mt-1"
+                        label="Does the building have a basement?"
+                        value={hasBasement}
+                        onChange={() => {
+                          setHasBasement((prev) => !prev);
+                        }}
+                      />
+                      {hasBasement && (
+                        <>
+                          <Input
+                            className="mb-4 mt-1"
+                            placeholder="No. of basement floors"
+                            type="number"
+                          />
+                        </>
+                      )}
+                      <br />
+                      <div className="flex justify-end">
+                        <Button
+                          fullWidth
+                          onClick={() => {
+                            setOpenBuildingComplexDrawer(false);
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </Box>
+                  </Drawer>
+
+                  <Drawer
+                    open={openUnitsDrawer}
+                    anchor="right"
+                    size="lg"
+                    onClose={() => {
+                      setOpenUnitsDrawer(false);
+                    }}
+                  >
+                    <Box className="m-6">
+                      <AccordionGroup>
+                        {unitsOnFloor.map((element, index) => (
+                          <Accordion>
+                            <AccordionSummary>
+                              Floor {index + 1}
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              {unitsOnFloor[index].map(
+                                (element, innerIndex) => (
+                                  <div className="flex">
+                                    <Input className="w-16" />
+                                    <IconButton
+                                      className="w-6"
+                                      onClick={addUnitsOnFloor(
+                                        index,
+                                        innerIndex
+                                      )}
+                                    >
+                                      <AddCircleOutlined />
+                                    </IconButton>
+                                  </div>
+                                )
+                              )}
+                              {/* <div className="flex">
+                                <Input className="w-16" />
+                                <IconButton className="w-6">
+                                  <AddCircleOutlined />
+                                </IconButton>
+                              </div> */}
+                            </AccordionDetails>
+                          </Accordion>
+                        ))}
+                      </AccordionGroup>
+                      <Button
+                        fullWidth
+                        sx={{ marginTop: "1rem" }}
+                        onClick={() => {
+                          setOpenUnitsDrawer(false);
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </Box>
+                  </Drawer>
+                  <Button
+                    fullWidth
+                    sx={{ marginTop: "1rem" }}
+                    onClick={() => {
+                      setOpenUnitsDrawer(false);
+                    }}
+                  >
+                    Save
+                  </Button>
+                </>
+              </>
+            )}
+            {typeOfProject == "Office Complex" && (
+              <>
+                <>
+                  <div>Office Complex</div>
+                  <TableTemplateComponent
+                    hasCrudActions={true}
+                    onAdd={handleAddBuildings}
+                    columns={[
+                      { header: "Building No.", key: "buildingName" },
+                      { header: "Project Name", key: "projectName" },
+                      { header: "No. of Floors", key: "floors" },
+                      {
+                        header: "",
+                        key: null,
+                        cell: () => (
+                          <Button
+                            size="sm"
+                            onClick={() => {
+                              setOpenUnitsDrawer(true);
+                            }}
+                          >
+                            Add Units
+                          </Button>
+                        ),
+                      },
+                    ]}
+                    data={buildings}
+                  />
+
+                  <Drawer
+                    open={openBuildingComplexDrawer}
+                    anchor="right"
+                    size="lg"
+                    onClose={() => {
+                      setOpenBuildingComplexDrawer(false);
+                    }}
+                  >
+                    <Box className="m-6">
+                      <FormHelperText>Building Name</FormHelperText>
+                      <Input
+                        className="mb-4 mt-1"
+                        placeholder="Building Name"
+                      />
+                      <FormHelperText>Number of Floors</FormHelperText>
+                      <Input
+                        className="mb-4 mt-1"
+                        placeholder="No. of Floors"
+                        type="number"
+                      />
+                      <Checkbox
+                        className="mb-4 mt-1"
+                        onChange={() => {
+                          setHasGroundFloor((prev) => !prev);
+                        }}
+                        checked={hasGroundFloor}
+                        label="Does the building include a ground floor?"
+                      />
+                      <br />
+                      <Checkbox
+                        className="mb-4 mt-1"
+                        label="Does the building have a basement?"
+                        value={hasBasement}
+                        onChange={() => {
+                          setHasBasement((prev) => !prev);
+                        }}
+                      />
+                      {hasBasement && (
+                        <>
+                          <Input
+                            className="mb-4 mt-1"
+                            placeholder="No. of basement floors"
+                            type="number"
+                          />
+                        </>
+                      )}
+                      <br />
+                      <div className="flex justify-end">
+                        <Button
+                          fullWidth
+                          onClick={() => {
+                            setOpenBuildingComplexDrawer(false);
+                          }}
+                        >
+                          Save
+                        </Button>
+                      </div>
+                    </Box>
+                  </Drawer>
+
+                  <Drawer
+                    open={openUnitsDrawer}
+                    anchor="right"
+                    size="lg"
+                    onClose={() => {
+                      setOpenUnitsDrawer(false);
+                    }}
+                  >
+                    <Box className="m-6">
+                      <AccordionGroup>
+                        {unitsOnFloor.map((element, index) => (
+                          <Accordion>
+                            <AccordionSummary>
+                              Floor {index + 1}
+                            </AccordionSummary>
+                            <AccordionDetails>
+                              {unitsOnFloor[index].map(
+                                (element, innerIndex) => (
+                                  <div className="flex">
+                                    <Input className="w-16" />
+                                    <IconButton
+                                      className="w-6"
+                                      onClick={addUnitsOnFloor(
+                                        index,
+                                        innerIndex
+                                      )}
+                                    >
+                                      <AddCircleOutlined />
+                                    </IconButton>
+                                  </div>
+                                )
+                              )}
+                              {/* <div className="flex">
+                                <Input className="w-16" />
+                                <IconButton className="w-6">
+                                  <AddCircleOutlined />
+                                </IconButton>
+                              </div> */}
+                            </AccordionDetails>
+                          </Accordion>
+                        ))}
+                      </AccordionGroup>
+                      <Button
+                        fullWidth
+                        sx={{ marginTop: "1rem" }}
+                        onClick={() => {
+                          setOpenUnitsDrawer(false);
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </Box>
+                  </Drawer>
+                </>
+              </>
+            )}
           </Box>
         </Drawer>
       </div>
