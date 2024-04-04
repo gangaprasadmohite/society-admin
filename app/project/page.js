@@ -30,6 +30,7 @@ import Link from "next/link";
 import axios from "axios";
 import { AddCircleOutlined } from "@mui/icons-material";
 import Drawer from "@/lib/components/drawer/Drawer";
+import StyledButton from "@/lib/components/styledButton";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -202,9 +203,11 @@ export default function Project() {
                         defaultChecked={project["bungalowSociety"]}
                       />
                       {project["bungalowSociety"] == true && (
-                        <Button size="sm" onClick={onAdd("Bungalow Society")}>
-                          Add
-                        </Button>
+                        <StyledButton
+                          size="sm"
+                          label="add"
+                          onClick={onAdd("Bungalow Society")}
+                        />
                       )}
                     </div>
                     <div>
@@ -217,9 +220,11 @@ export default function Project() {
                         defaultChecked={project["buildingComplex"]}
                       />
                       {project["buildingComplex"] == true && (
-                        <Button size="sm" onClick={onAdd("Building Complex")}>
-                          Add
-                        </Button>
+                        <StyledButton
+                          label="Add"
+                          size="sm"
+                          onClick={onAdd("Building Complex")}
+                        />
                       )}
                     </div>
 
@@ -233,9 +238,11 @@ export default function Project() {
                         defaultChecked={project["privateBungalow"]}
                       />
                       {project["privateBungalow"] == true && (
-                        <Button size="sm" onClick={onAdd("Private Bungalow")}>
-                          Add
-                        </Button>
+                        <StyledButton
+                          label="Add"
+                          size="sm"
+                          onClick={onAdd("Private Bungalow")}
+                        />
                       )}
                     </div>
 
@@ -249,9 +256,11 @@ export default function Project() {
                         defaultChecked={project["mall"]}
                       />
                       {project["mall"] == true && (
-                        <Button size="sm" onClick={onAdd("Mall")}>
-                          Add
-                        </Button>
+                        <StyledButton
+                          label="Add"
+                          size="sm"
+                          onClick={onAdd("Mall")}
+                        />
                       )}
                     </div>
                     <div>
@@ -264,7 +273,11 @@ export default function Project() {
                         defaultChecked={project["shop"]}
                       />
                       {project["shop"] == true && (
-                        <Button size="sm">Add</Button>
+                        <StyledButton
+                          label="Add"
+                          onClick={() => {}}
+                          size="sm"
+                        />
                       )}
                     </div>
                     <div>
@@ -277,16 +290,18 @@ export default function Project() {
                         defaultChecked={project["officeComplex"]}
                       />
                       {project["mall"] == true && (
-                        <Button size="sm" onClick={onAdd("Office Complex")}>
-                          Add
-                        </Button>
+                        <StyledButton
+                          label="Add"
+                          size="sm"
+                          onClick={onAdd("Office Complex")}
+                        />
                       )}
                     </div>
                   </div>
                 </div>
 
                 <div className="sm:col-span-3">
-                  <TextField label="Address" />
+                  <OutlinedInput label="Address" />
                 </div>
                 <div className="sm:col-span-3">
                   <OutlinedInput label="Developer" />
@@ -299,6 +314,8 @@ export default function Project() {
                     valueProperty="id"
                   />
                 </div>
+                <br />
+                <StyledButton label="Save" />
               </div>
             </div>
           </form>
@@ -320,14 +337,13 @@ export default function Project() {
                       header: "",
                       key: null,
                       cell: () => (
-                        <Button
+                        <StyledButton
+                          label="Add Floors"
                           size="sm"
                           onClick={() => {
                             setOpenUnitsDrawer(true);
                           }}
-                        >
-                          Add Floors
-                        </Button>
+                        />
                       ),
                     },
                   ]}
@@ -341,13 +357,13 @@ export default function Project() {
                 >
                   <div className="m-6 min-w-72">
                     <FormHelperText>Building Name</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="Building Name"
                     />
 
                     <FormHelperText>Number of Floors</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="No. of Floors"
                       type="number"
@@ -371,7 +387,7 @@ export default function Project() {
                     />
                     {hasBasement && (
                       <>
-                        <TextField
+                        <OutlinedInput
                           className="mb-4 mt-1"
                           placeholder="No. of basement floors"
                           type="number"
@@ -380,14 +396,12 @@ export default function Project() {
                     )}
                     <br />
                     <div className="flex justify-end">
-                      <Button
-                        fullWidth
+                      <StyledButton
+                        label="Save"
                         onClick={() => {
                           setOpenBuildingComplexDrawer(false);
                         }}
-                      >
-                        Save
-                      </Button>
+                      />
                     </div>
                   </div>
                 </Drawer>
@@ -407,7 +421,7 @@ export default function Project() {
                               (element, innerIndex) => (
                                 <div className="flex m-4">
                                   <div className="mx-1">
-                                    <TextField
+                                    <OutlinedInput
                                       label="Unit No."
                                       className="w-16"
                                     />
@@ -425,7 +439,7 @@ export default function Project() {
                                     />
                                   </div>
                                   <IconButton
-                                    className="w-6"
+                                    // className="h-1"
                                     onClick={addUnitsOnFloor(index, innerIndex)}
                                   >
                                     <AddCircleOutlined />
@@ -435,7 +449,7 @@ export default function Project() {
                             )}
                             {/* <
                               div className="flex">
-                                <TextField className="w-16" />
+                                <OutlinedInput className="w-16" />
                                 <IconButton className="w-6">
                                   <AddCircleOutlined />
                                 </IconButton>
@@ -444,24 +458,20 @@ export default function Project() {
                         </Accordion>
                       ))}
                     </AccordionGroup>
-                    <Button
-                      fullWidth
+                    <StyledButton
+                      label="Save"
                       sx={{ marginTop: "1rem" }}
                       onClick={() => {
                         setOpenUnitsDrawer(false);
                       }}
-                    >
-                      Save
-                    </Button>
+                    />
                   </Box>
                 </Drawer>
-                <Button
-                  fullWidth
+                <StyledButton
+                  label="Save"
                   sx={{ marginTop: "1rem" }}
                   onClick={handleCloseDrawer}
-                >
-                  Save
-                </Button>
+                />
               </>
             )}
             {typeOfProject == "Bungalow Society" && (
@@ -477,13 +487,11 @@ export default function Project() {
                   onEdit={() => {}}
                   onDelete={() => {}}
                 />
-                <Button
-                  fullWidth
+                <StyledButton
+                  label="Save"
                   sx={{ marginTop: "1rem" }}
                   onClick={handleCloseDrawer}
-                >
-                  Save
-                </Button>
+                />
 
                 <UnitModal
                   isModalOpen={openUnitsModal}
@@ -506,13 +514,11 @@ export default function Project() {
                   onEdit={() => {}}
                   onDelete={() => {}}
                 />
-                <Button
-                  fullWidth
+                <StyledButton
+                  label="Save"
                   sx={{ marginTop: "1rem" }}
                   onClick={handleCloseDrawer}
-                >
-                  Save
-                </Button>
+                />
                 <UnitModal
                   isModalOpen={openUnitsModal}
                   closeModal={() => {
@@ -542,14 +548,13 @@ export default function Project() {
                       header: "",
                       key: null,
                       cell: () => (
-                        <Button
+                        <StyledButton
+                          label="Add Floors"
                           size="sm"
                           onClick={() => {
                             setOpenUnitsDrawer(true);
                           }}
-                        >
-                          Add Floors
-                        </Button>
+                        />
                       ),
                     },
                   ]}
@@ -563,13 +568,13 @@ export default function Project() {
                 >
                   <div className="m-6 min-w-72">
                     <FormHelperText>Building Name</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="Building Name"
                     />
 
                     <FormHelperText>Number of Floors</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="No. of Floors"
                       type="number"
@@ -593,7 +598,7 @@ export default function Project() {
                     />
                     {hasBasement && (
                       <>
-                        <TextField
+                        <OutlinedInput
                           className="mb-4 mt-1"
                           placeholder="No. of basement floors"
                           type="number"
@@ -602,14 +607,12 @@ export default function Project() {
                     )}
                     <br />
                     <div className="flex justify-end">
-                      <Button
-                        fullWidth
+                      <StyledButton
+                        label="Save"
                         onClick={() => {
                           setOpenBuildingComplexDrawer(false);
                         }}
-                      >
-                        Save
-                      </Button>
+                      />
                     </div>
                   </div>
                 </Drawer>
@@ -629,7 +632,7 @@ export default function Project() {
                               (element, innerIndex) => (
                                 <div className="flex m-4">
                                   <div className="mx-1">
-                                    <TextField
+                                    <OutlinedInput
                                       label="Unit No."
                                       className="w-16"
                                     />
@@ -657,7 +660,7 @@ export default function Project() {
                             )}
                             {/* <
                               div className="flex">
-                                <TextField className="w-16" />
+                                <OutlinedInput className="w-16" />
                                 <IconButton className="w-6">
                                   <AddCircleOutlined />
                                 </IconButton>
@@ -666,24 +669,20 @@ export default function Project() {
                         </Accordion>
                       ))}
                     </AccordionGroup>
-                    <Button
-                      fullWidth
+                    <StyledButton
+                      label="Save"
                       sx={{ marginTop: "1rem" }}
                       onClick={() => {
                         setOpenUnitsDrawer(false);
                       }}
-                    >
-                      Save
-                    </Button>
+                    />
                   </Box>
                 </Drawer>
-                <Button
-                  fullWidth
+                <StyledButton
+                  label="Save"
                   sx={{ marginTop: "1rem" }}
                   onClick={handleCloseDrawer}
-                >
-                  Save
-                </Button>{" "}
+                />
               </>
             )}
 
@@ -701,14 +700,13 @@ export default function Project() {
                       header: "",
                       key: null,
                       cell: () => (
-                        <Button
+                        <StyledButton
+                          label="Add Floors"
                           size="sm"
                           onClick={() => {
                             setOpenUnitsDrawer(true);
                           }}
-                        >
-                          Add Floors
-                        </Button>
+                        />
                       ),
                     },
                   ]}
@@ -722,13 +720,13 @@ export default function Project() {
                 >
                   <div className="m-6 min-w-72">
                     <FormHelperText>Building Name</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="Building Name"
                     />
 
                     <FormHelperText>Number of Floors</FormHelperText>
-                    <TextField
+                    <OutlinedInput
                       className="mb-4 mt-1"
                       placeholder="No. of Floors"
                       type="number"
@@ -752,7 +750,7 @@ export default function Project() {
                     />
                     {hasBasement && (
                       <>
-                        <TextField
+                        <OutlinedInput
                           className="mb-4 mt-1"
                           placeholder="No. of basement floors"
                           type="number"
@@ -761,14 +759,12 @@ export default function Project() {
                     )}
                     <br />
                     <div className="flex justify-end">
-                      <Button
-                        fullWidth
+                      <StyledButton
+                        label="Save"
                         onClick={() => {
                           setOpenBuildingComplexDrawer(false);
                         }}
-                      >
-                        Save
-                      </Button>
+                      />
                     </div>
                   </div>
                 </Drawer>
@@ -788,7 +784,7 @@ export default function Project() {
                               (element, innerIndex) => (
                                 <div className="flex m-4">
                                   <div className="mx-1">
-                                    <TextField
+                                    <OutlinedInput
                                       label="Unit No."
                                       className="w-16"
                                     />
@@ -816,7 +812,7 @@ export default function Project() {
                             )}
                             {/* <
                               div className="flex">
-                                <TextField className="w-16" />
+                                <OutlinedInput className="w-16" />
                                 <IconButton className="w-6">
                                   <AddCircleOutlined />
                                 </IconButton>
@@ -825,24 +821,20 @@ export default function Project() {
                         </Accordion>
                       ))}
                     </AccordionGroup>
-                    <Button
-                      fullWidth
+                    <StyledButton
+                      label="Save"
                       sx={{ marginTop: "1rem" }}
                       onClick={() => {
                         setOpenUnitsDrawer(false);
                       }}
-                    >
-                      Save
-                    </Button>
+                    />
                   </Box>
                 </Drawer>
-                <Button
-                  fullWidth
+                <StyledButton
+                  label="Save"
                   sx={{ marginTop: "1rem" }}
                   onClick={handleCloseDrawer}
-                >
-                  Save
-                </Button>{" "}
+                />
               </>
             )}
           </Box>
