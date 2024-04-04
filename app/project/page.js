@@ -29,7 +29,7 @@ import { UnitModal } from "@/lib/components/modal";
 import Link from "next/link";
 import axios from "axios";
 import { AddCircleOutlined } from "@mui/icons-material";
-import Drawer from "@/lib/components/drawer/Drawer";
+import Drawer from "@/lib/components/drawer";
 import StyledButton from "@/lib/components/styledButton";
 
 function classNames(...classes) {
