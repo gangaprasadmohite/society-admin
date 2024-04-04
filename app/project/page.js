@@ -315,7 +315,7 @@ export default function Project() {
                   />
                 </div>
                 <br />
-                <StyledButton label="Save" />
+                <StyledButton label="Save" onClick={() => {}} />
               </div>
             </div>
           </form>
