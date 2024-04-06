@@ -1,160 +1,81 @@
 "use client";
 
-import OutlinedInput from "@/lib/components/OulinedInput";
-import Drawer from "@/lib/components/drawer";
-import { ConfigFormContainer } from "@/lib/components/project";
-import Select from "@/lib/components/select";
-import StyledButton from "@/lib/components/styledButton";
-import AddIcon from "@mui/icons-material/Add";
-import { Checkbox, IconButton } from "@mui/joy";
-import { produce } from "immer";
-import { useState } from "react";
+import { TableTemplateComponent } from "@/lib/components/table";
+import { Chip } from "@mui/joy";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { v4 as uuid } from "uuid";
 
 export default function Project() {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-
-  const [project, setProject] = useState({
-    name: "",
-    address: "",
-    developer: null,
-    amenities: [],
-    types: {},
-  });
-
-  const [currentType, setCurrentType] = useState("");
-
-  const [projectTypes, setProjectTypes] = useState([
+  const columns = [
     {
       id: 1,
-      name: "bunglowSociety",
-      alias: "Bunglow society",
-      isChecked: false,
+      header: "Project name",
+      key: "projectName",
     },
     {
       id: 2,
-      name: "buildingComplex",
-      alias: "Building Complex",
-      isChecked: false,
+      header: "Types",
+      key: "types",
+      cell: (row) => {
+        return row.types.map((type) => (
+          <Chip className="mx-1 my-1" color="primary" key={uuid()}>
+            {type}
+          </Chip>
+        ));
+      },
     },
     {
       id: 3,
-      name: "privateBunglow",
-      alias: "Private Bunglow",
-      isChecked: false,
+      header: "Developer",
+      key: "developer",
     },
     {
       id: 4,
-      name: "mall",
-      alias: "Mall",
-      isChecked: false,
+      header: "Amenities",
+      key: "amenities",
+      cell: (row) => {
+        return row.amenities.map((amenity) => (
+          <Chip className="mx-1 my-1" color="primary" key={uuid()}>
+            {amenity}
+          </Chip>
+        ));
+      },
+    },
+  ];
+
+  const projects = [
+    {
+      id: 1,
+      projectName: "Pride Kingsburry",
+      types: ["Building Complex", "Bunglow Society"],
+      developer: "Pride",
+      amenities: ["Pool", "Garden"],
     },
     {
-      id: 5,
-      name: "shop",
-      alias: "Shop",
-      isChecked: false,
+      id: 2,
+      projectName: "Pride Boston",
+      types: ["Building Complex"],
+      developer: "Pride",
+      amenities: ["Pool", "Garden"],
     },
-    {
-      id: 6,
-      name: "officeComplex",
-      alias: "Office Complex",
-      isChecked: false,
-    },
-  ]);
+  ];
 
-  const [amenities, setAmenities] = useState([
-    { id: 1, name: "Swimming Pool" },
-    { id: 2, name: "Gym" },
-    { id: 3, name: "Tennis court" },
-  ]);
-
-  const handleProjectTypeChange = (index) => (event) => {
-    let nextState = produce(projectTypes, (draft) => {
-      draft[index]["isChecked"] = event.target.checked;
-    });
-
-    setProjectTypes(nextState);
-  };
-
-  const handleAddProjectDetails = (index) => (event) => {
-    let type = projectTypes[index]["name"];
-    setCurrentType(type);
-    let nextState = produce(project, (draft) => {
-      draft["types"][type] = {};
-    });
-    setProject(nextState);
-    setIsDrawerOpen(true);
-  };
+  const Router = useRouter();
 
   return (
     <div>
-      <div className="flex flex-col items-center">
-        <form method="POST" className="max-w-xl mt-10">
-          <div>
-            <div className="sm:col-span-12">
-              <OutlinedInput label="Project name" />
-            </div>
-            <div className="mt-5  grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-              <div className="sm:col-span-12">
-                <div className="mt-5 space-y-10">
-                  <fieldset>
-                    <div className="space-y-6">
-                      {projectTypes.map((type, index) => (
-                        <div className="relative flex gap-x-3" key={type.id}>
-                          <div className="flex h-6 items-center">
-                            <div className="flex items-center">
-                              <Checkbox
-                                label={type.alias}
-                                variant="soft"
-                                className="mr-5"
-                                name={type.name}
-                                checked={type.isChecked}
-                                onChange={handleProjectTypeChange(index)}
-                              />
-                              <IconButton
-                                size="sm"
-                                disabled={!type.isChecked}
-                                onClick={handleAddProjectDetails(index)}
-                              >
-                                <AddIcon />
-                              </IconButton>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </fieldset>
-                </div>
-              </div>
-
-              <div className="mt-5 sm:col-span-12">
-                <OutlinedInput label="Address" />
-              </div>
-              <div className="mt-5 sm:col-span-12">
-                <OutlinedInput label="Developer" />
-              </div>
-              <div className="mt-5 sm:col-span-12">
-                <Select
-                  options={amenities}
-                  label="Amenities"
-                  nameProperty="name"
-                  valueProperty="id"
-                />
-              </div>
-              <div className="w-full flex justify-end">
-                <StyledButton label="Save" onClick={() => {}} />
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <Drawer
-        open={isDrawerOpen}
-        onClose={() => {
-          setIsDrawerOpen(false);
+      <TableTemplateComponent
+        columns={columns}
+        hasCrudActions={true}
+        data={projects}
+        onAdd={() => {
+          Router.push("/project/0");
         }}
-        children={<ConfigFormContainer type={currentType} />}
+        onEdit={(index) => (e) => {
+          let projectId = projects[index]["id"];
+          Router.push(`/project/${projectId}`);
+        }}
       />
     </div>
   );
