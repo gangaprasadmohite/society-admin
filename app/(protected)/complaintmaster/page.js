@@ -2,6 +2,7 @@
 
 import { AssignWorkerForm } from "@/lib/components/complaint";
 import { ModalTemplate } from "@/lib/components/modal";
+import PageHeader from "@/lib/components/pageHeader";
 import StyledButton from "@/lib/components/styledButton";
 import { TableTemplateComponent } from "@/lib/components/table";
 import PrintIcon from "@mui/icons-material/Print";
@@ -147,76 +148,79 @@ const Complaints = () => {
 
   return (
     <>
-      <TableTemplateComponent
-        hasCrudActions={false}
-        columns={[
-          {
-            header: "",
-            key: null,
-            headerStyle: { width: "5%" },
-            cell: (row, index) => (
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Checkbox
-                  size="sm"
-                  onChange={handleChange(index)}
-                  checked={row.isChecked}
-                  disabled={row.status === "Completed"}
-                />
-              </div>
-            ),
-          },
-          {
-            header: "Name",
-            key: "name",
-          },
-          {
-            header: "Society",
-            key: "society",
-          },
-          { header: "Building", key: "building" },
-          { header: "Flat", key: "flat" },
-          { header: "Type", key: "type" },
-          { header: "Description", key: "description" },
-          {
-            header: "Status",
-            key: "status",
-            cell: (rowData) => (
-              <Chip
-                color={rowData.status == "Completed" ? "success" : "warning"}
-              >
-                {rowData.status}
-              </Chip>
-            ),
-          },
-          { header: "Worker Assigned", key: "worker" },
-          {
-            header: "Assign Worker",
-            key: null,
-            cell: (row, index) => (
-              <div
-                className="buttonParentDiv"
-                style={{ display: "flex", justifyContent: "center" }}
-              >
-                <StyledButton
-                  label="Assign"
-                  onClick={onAdd(row, index)}
-                  size="sm"
-                />
-              </div>
-            ),
-          },
-          {
-            header: "Print",
-            key: "",
-            cell: (rowData) => (
-              <IconButton variant="soft" size="sm">
-                <PrintIcon />
-              </IconButton>
-            ),
-          },
-        ]}
-        data={complaints}
-      />
+      <PageHeader pageTitle="Complaints" backPath="/" />
+      <div>
+        <TableTemplateComponent
+          hasCrudActions={false}
+          columns={[
+            {
+              header: "",
+              key: null,
+              headerStyle: { width: "5%" },
+              cell: (row, index) => (
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <Checkbox
+                    size="sm"
+                    onChange={handleChange(index)}
+                    checked={row.isChecked}
+                    disabled={row.status === "Completed"}
+                  />
+                </div>
+              ),
+            },
+            {
+              header: "Name",
+              key: "name",
+            },
+            {
+              header: "Society",
+              key: "society",
+            },
+            { header: "Building", key: "building" },
+            { header: "Flat", key: "flat" },
+            { header: "Type", key: "type" },
+            { header: "Description", key: "description" },
+            {
+              header: "Status",
+              key: "status",
+              cell: (rowData) => (
+                <Chip
+                  color={rowData.status == "Completed" ? "success" : "warning"}
+                >
+                  {rowData.status}
+                </Chip>
+              ),
+            },
+            { header: "Worker Assigned", key: "worker" },
+            {
+              header: "Assign Worker",
+              key: null,
+              cell: (row, index) => (
+                <div
+                  className="buttonParentDiv"
+                  style={{ display: "flex", justifyContent: "center" }}
+                >
+                  <StyledButton
+                    label="Assign"
+                    onClick={onAdd(row, index)}
+                    size="sm"
+                  />
+                </div>
+              ),
+            },
+            {
+              header: "Print",
+              key: "",
+              cell: (rowData) => (
+                <IconButton variant="soft" size="sm">
+                  <PrintIcon />
+                </IconButton>
+              ),
+            },
+          ]}
+          data={complaints}
+        />
+      </div>
       <div className="flex justify-end">
         <StyledButton label="Mark as Complete" onClick={handleSubmit} />
       </div>

@@ -2,6 +2,7 @@
 
 import Drawer from "@/lib/components/drawer";
 import { OccupantForm } from "@/lib/components/occupant";
+import PageHeader from "@/lib/components/pageHeader";
 import { TableTemplateComponent } from "@/lib/components/table";
 import { useEffect, useState } from "react";
 
@@ -60,30 +61,34 @@ const page = () => {
 
   return (
     <div>
-      <Drawer
-        children={<OccupantForm />}
-        open={isDrawerOpen}
-        onClose={toggleDrawer}
-      />
-      <TableTemplateComponent
-        hasCrudActions={true}
-        onAdd={onAdd}
-        columns={[
-          {
-            header: "Occupant",
-            key: "name",
-          },
-          {
-            header: "Date Of Birth",
-            key: "dob",
-          },
-          { header: "Gender", key: "gender" },
-          { header: "Nationality", key: "nationality" },
-          { header: "Email", key: "email" },
-          { header: "Phone", key: "phone" },
-        ]}
-        data={occupants}
-      />
+      <PageHeader pageTitle="Occupants" backPath="/" />
+
+      <div>
+        <Drawer
+          children={<OccupantForm />}
+          open={isDrawerOpen}
+          onClose={toggleDrawer}
+        />
+        <TableTemplateComponent
+          hasCrudActions={true}
+          onAdd={onAdd}
+          columns={[
+            {
+              header: "Occupant",
+              key: "name",
+            },
+            {
+              header: "Date Of Birth",
+              key: "dob",
+            },
+            { header: "Gender", key: "gender" },
+            { header: "Nationality", key: "nationality" },
+            { header: "Email", key: "email" },
+            { header: "Phone", key: "phone" },
+          ]}
+          data={occupants}
+        />
+      </div>
     </div>
   );
 };

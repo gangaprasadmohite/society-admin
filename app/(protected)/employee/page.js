@@ -2,6 +2,7 @@
 
 import Drawer from "@/lib/components/drawer";
 import { EmployeeForm } from "@/lib/components/employee";
+import PageHeader from "@/lib/components/pageHeader";
 import { TableTemplateComponent } from "@/lib/components/table";
 import { useEffect, useState } from "react";
 
@@ -79,23 +80,26 @@ function Employee() {
   };
   return (
     <div>
-      <TableTemplateComponent
-        hasCrudActions={true}
-        onAdd={onAdd}
-        columns={[
-          {
-            header: "Employee",
-            key: "name",
-          },
-          {
-            header: "Phone Number",
-            key: "phone",
-          },
-          { header: "Email", key: "email" },
-        ]}
-        data={employees}
-        idProperty="id"
-      />
+      <PageHeader pageTitle="Employees" backPath="/" />
+      <div>
+        <TableTemplateComponent
+          hasCrudActions={true}
+          onAdd={onAdd}
+          columns={[
+            {
+              header: "Employee",
+              key: "name",
+            },
+            {
+              header: "Phone Number",
+              key: "phone",
+            },
+            { header: "Email", key: "email" },
+          ]}
+          data={employees}
+          idProperty="id"
+        />
+      </div>
       <Drawer
         open={open}
         onClose={handleDrawerClose}

@@ -3,6 +3,7 @@
 import OutlinedInput from "@/lib/components/OulinedInput";
 import Drawer from "@/lib/components/drawer";
 import MultiSelect from "@/lib/components/multiSelect";
+import PageHeader from "@/lib/components/pageHeader";
 import { ConfigFormContainer } from "@/lib/components/project";
 import Select from "@/lib/components/select";
 import StyledButton from "@/lib/components/styledButton";
@@ -111,8 +112,9 @@ export default function AddProject({ params }) {
 
   return (
     <div>
-      <div className="flex flex-col items-center">
-        <form method="POST" className="max-w-xl mt-10">
+      <PageHeader pageTitle="Project" backPath="/project" />
+      <div className="border-t mt-2">
+        <form method="POST" className="max-w-xl mt-5">
           <div>
             <div className="sm:col-span-12">
               <OutlinedInput label="Project name" value={project?.name} />

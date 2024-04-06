@@ -1,5 +1,6 @@
 "use client";
 
+import PageHeader from "@/lib/components/pageHeader";
 import { TableTemplateComponent } from "@/lib/components/table";
 import { Chip } from "@mui/joy";
 import { useRouter } from "next/navigation";
@@ -65,18 +66,22 @@ export default function Project() {
 
   return (
     <div>
-      <TableTemplateComponent
-        columns={columns}
-        hasCrudActions={true}
-        data={projects}
-        onAdd={() => {
-          Router.push("/project/0");
-        }}
-        onEdit={(index) => (e) => {
-          let projectId = projects[index]["id"];
-          Router.push(`/project/${projectId}`);
-        }}
-      />
+      <PageHeader pageTitle="Projects" backPath="/" />
+
+      <div>
+        <TableTemplateComponent
+          columns={columns}
+          hasCrudActions={true}
+          data={projects}
+          onAdd={() => {
+            Router.push("/project/0");
+          }}
+          onEdit={(index) => (e) => {
+            let projectId = projects[index]["id"];
+            Router.push(`/project/${projectId}`);
+          }}
+        />
+      </div>
     </div>
   );
 }
