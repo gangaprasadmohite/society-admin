@@ -119,7 +119,7 @@ export default function AddProject({ params }) {
             <div className="sm:col-span-12">
               <OutlinedInput label="Project name" value={project?.name} />
             </div>
-            <div className="mt-5  grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div className="mt-5 grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
               <div className="sm:col-span-12">
                 <div className="mt-5 space-y-10">
                   <fieldset>
