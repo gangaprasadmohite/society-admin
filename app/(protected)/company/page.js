@@ -3,7 +3,7 @@
 import OutlinedInput from "@/lib/components/OulinedInput";
 import TextField from "@/lib/components/TextField";
 import PageHeader from "@/lib/components/pageHeader";
-import Select from "@/lib/components/select";
+import Select from "@/lib/components/Select";
 import StyledButton from "@/lib/components/styledButton";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -29,7 +29,7 @@ export default function Company() {
   return (
     <div>
       <div className="flex justify-between">
-        <PageHeader pageTitle="Company" backPath="/" />
+        <PageHeader pageTitle="Company" backPath="/dashboard" />
         <div className="cursor-pointer">
           <IconButton variant="plain" onClick={handleModeChange}>
             {isEditMode ? <VisibilityIcon /> : <EditIcon />}

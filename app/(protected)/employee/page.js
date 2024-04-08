@@ -80,7 +80,7 @@ function Employee() {
   };
   return (
     <div>
-      <PageHeader pageTitle="Employees" backPath="/" />
+      <PageHeader pageTitle="Employees" backPath="/dashboard" />
       <div>
         <TableTemplateComponent
           hasCrudActions={true}

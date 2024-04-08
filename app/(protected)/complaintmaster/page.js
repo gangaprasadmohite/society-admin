@@ -148,7 +148,7 @@ const Complaints = () => {
 
   return (
     <>
-      <PageHeader pageTitle="Complaints" backPath="/" />
+      <PageHeader pageTitle="Complaints" backPath="/dashboard" />
       <div>
         <TableTemplateComponent
           hasCrudActions={false}

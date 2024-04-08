@@ -33,7 +33,7 @@ const LogInPage = () => {
                 color="primary"
                 variant="solid"
                 onClick={() => {
-                  router.push("/");
+                  router.push("/dashboard");
                 }}
               />
             </div>

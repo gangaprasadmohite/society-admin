@@ -66,7 +66,7 @@ export default function Project() {
 
   return (
     <div>
-      <PageHeader pageTitle="Projects" backPath="/" />
+      <PageHeader pageTitle="Projects" backPath="/dashboard" />
 
       <div>
         <TableTemplateComponent

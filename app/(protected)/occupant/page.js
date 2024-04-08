@@ -61,7 +61,7 @@ const page = () => {
 
   return (
     <div>
-      <PageHeader pageTitle="Occupants" backPath="/" />
+      <PageHeader pageTitle="Occupants" backPath="/dashboard" />
 
       <div>
         <Drawer
