@@ -20,7 +20,12 @@ export default function RootLayout({ children }) {
           <Toaster />
           <div className="min-h-full">
             <Header />
-            <main>{children}</main>
+
+            <main>
+              <div className="mx-auto max-w-screen-xl h-screen py-6  border ">
+                {children}
+              </div>
+            </main>
           </div>
         </AppRouterCacheProvider>
       </body>
