@@ -52,7 +52,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      <div className="flex w-full my-3 bg-slate-100	">
+      <div className="flex w-full my-3 bg-slate-50	">
         <div className=" w-1/4 h-40 flex flex-col p-3">
           <div className="block text-sm font-semibold leading-6 text-gray-600">
             Total Complaints
@@ -91,7 +91,7 @@ export default function Dashboard() {
         <div className="block text-md font-semibold leading-6 text-gray-600 mr-4 my-3 cursor-pointer pl-3  ">
           Recent Activity
         </div>
-        <div className="bg-slate-100 h-9 pl-3 py-1 border">Today</div>
+        <div className="bg-slate-50 h-9 pl-3 py-1 border">Today</div>
         <ul role="list" className="divide-y divide-gray-100 p-3">
           {people.map((person) => (
             <li

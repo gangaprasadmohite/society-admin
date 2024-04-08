@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
             <Header />
 
             <main>
-              <div className="mx-auto max-w-screen-xl h-screen py-6  border ">
+              <div className="mx-auto max-w-screen-xl min-h-screen py-6  border ">
                 {children}
               </div>
             </main>
